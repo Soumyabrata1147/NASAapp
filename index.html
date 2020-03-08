@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA</title>
+    <style>
+        body{
+        margin:0;
+        padding:0;
+        height:100%;
+        width:100%;
+        }
+        #para2{
+            margin:5px 0;
+        }
+        #rover{
+            color:rgb(12,102,12);
+        }
+        #cam{
+            color: rgb(78, 78, 78);
+        }
+        .date{
+            color: black;
+        }
+        #data{
+            height:100%;
+            overflow-y:scroll;
+        }
+        #loading{
+            width:100%;
+            height:60px;
+            margin:0;
+            padding:0;
+        }
+        .loader {
+            margin:5px auto;
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid #111;
+  width: 50px;
+  height: 50px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+    </style>
+</head>
+<body>
+    <div id='data'></div>
+    <div id='loading'>
+        <div class='loader'>
+        </div>
+    </div>
+    <!-- <button id='loadmore' onclick='fetchAgain(XX,YY);'>load more</button> -->
+    <script>
+var myKEY="UCPVWdeJYo292po7j7YDIVVayDmU2SkLxZ4zatDa";    
+var url="https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=UCPVWdeJYo292po7j7YDIVVayDmU2SkLxZ4zatDa";
+
+function ajaxCall(){    
+var xmlhttp=new XMLHttpRequest();
+xmlhttp.onreadystatechange=function(){
+if(this.status==200 && this.readyState==4){
+    var obj=JSON.parse(this.responseText);
+    for(x=0;x<6;x++){
+    var img=obj.photos[x].img_src;
+    var earth_date=obj.photos[x].earth_date;
+    var rover_name=obj.photos[x].rover.name;
+    var cam_type=obj.photos[x].camera.full_name;
+    document.getElementById('data').innerHTML+="<div><img id='img' width='100%' src='"+img+"' width=400px><p id='para2'><span id='rover'>"+rover_name+" -</span>&nbsp;&nbsp;<span id='cam'>"+cam_type+"</span></p><p id='para2' class='date'>"+earth_date+"</p></div>";
+    }
+}
+}
+xmlhttp.open("GET",url,true);
+xmlhttp.send();
+}
+
+var XX=6;
+var YY=12;
+
+function fetchAgain(X,Y){
+    var x=X;
+var xmlhttp=new XMLHttpRequest();
+xmlhttp.onreadystatechange=function(){
+if(this.status==200 && this.readyState==4){
+    var obj=JSON.parse(this.responseText);
+    while(x<Y){
+    var img=obj.photos[x].img_src;
+    var earth_date=obj.photos[x].earth_date;
+    var rover_name=obj.photos[x].rover.name;
+    var cam_type=obj.photos[x].camera.full_name;
+    document.getElementById('data').innerHTML+="<div><img id='img' width='100%' src='"+img+"' width=400px><p id='para2'><span id='rover'>"+rover_name+" -</span>&nbsp;&nbsp;<span id='cam'>"+cam_type+"</span></p><p id='para2' class='date'>"+earth_date+"</p></div>";
+    x++;
+    }
+}
+}
+xmlhttp.open("GET",url,true);
+xmlhttp.send();
+
+XX=XX+6;
+YY=YY+6;
+}
+
+
+window.onload=function(){
+    ajaxCall();
+}
+
+window.onscroll=function(){
+    if(window.innerHeight + window.scrollY == document.body.offsetHeight){
+        // alert("page ends");
+        fetchAgain(XX,YY);
+    }
+}
+// dataScroll();
+    </script>
+</body>
+</html>
